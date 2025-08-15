@@ -81,7 +81,7 @@ if ! command -v apt &>/dev/null; then
     error_no_log "This script requires apt package manager (Debian/Ubuntu)"
 fi
 
-(sudo bash -c 'apt update && apt install -y build-essential procps curl file git wget' &>> "$LOG_FILE") &
+(sudo bash -c 'apt update && apt install -y build-essential procps curl file git wget zsh' &>> "$LOG_FILE") &
 pid=$!
 spinner "installing apt packages" "$pid"
 
