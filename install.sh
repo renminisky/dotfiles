@@ -59,21 +59,13 @@ spinner() {
 
 
 # Several guard clause checks before proceeding
-if [[ $EUID -eq 0 ]]; then
-    error_no_log "Don't run this script as root"
+if [[ $EUID -ne 0 ]]; then
+    error_no_log "This script requires root privileges. Please run it with: sudo ${BASH_SOURCE[0]} $*"
 fi
 
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
     error_no_log "This script is being sourced. Please execute it instead."
 fi
-
-
-# Keep sudo alive while the script runs
-if sudo -v; then
-    while true; do sudo -n true; sleep 60; done 2>/dev/null &
-    sudo_keeper_pid=$!
-fi
-trap 'kill $sudo_keeper_pid 2>/dev/null' EXIT  # end sudo process when the script exits
 
 
 # Install apt packages
