@@ -64,7 +64,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
-    error_no_log "This script is being sourced. Please execute it instead."
+    printf "${RED}[Error]${NC} This script is being sourced. Please execute it instead.\n" >&2
+    return 1
 fi
 
 
