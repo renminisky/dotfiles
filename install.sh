@@ -59,13 +59,13 @@ spinner() {
 
 
 # Several guard clause checks before proceeding
-if [[ $EUID -ne 0 ]]; then
-    error_no_log "This script requires root privileges. Please run it with: sudo ${BASH_SOURCE[0]}"
-fi
-
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
     printf "${RED}[Error]${NC} This script is being sourced. Please execute it instead.\n" >&2
     return 1
+fi
+
+if [[ $EUID -ne 0 ]]; then
+    error_no_log "This script requires root privileges. Please run it with: sudo ${BASH_SOURCE[0]}"
 fi
 
 
