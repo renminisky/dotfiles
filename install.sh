@@ -1,4 +1,11 @@
 #!/usr/bin/env bash
+
+# This script is intended to be run directly, not sourced.
+if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
+    printf "${RED:-\033[31m}[Error]${NC:-\033[0m} This script is being sourced. Please execute it instead.\n" >&2
+    return 1
+fi
+
 set -euo pipefail
 
 # ANSI color codes
@@ -59,11 +66,6 @@ spinner() {
 
 
 # Several guard clause checks before proceeding
-if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
-    printf "${RED}[Error]${NC} This script is being sourced. Please execute it instead.\n" >&2
-    return 1
-fi
-
 if [[ $EUID -ne 0 ]]; then
     error_no_log "This script requires root privileges. Please run it with: sudo ${BASH_SOURCE[0]}"
 fi
