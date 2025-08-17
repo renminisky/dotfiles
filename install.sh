@@ -1,10 +1,29 @@
 #!/usr/bin/env bash
 
-# This script is intended to be run directly, not sourced.
+# ────────────────────────────────────
+#           Execution Guards                                   
+# ────────────────────────────────────
+
+error_guard() {
+    printf "\033[31m[Error]\033[0m} %s\n" "$1" >&2
+}
+
+# Prevent the script from being sourced
 if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
-    printf "${RED:-\033[31m}[Error]${NC:-\033[0m} This script is being sourced. Please execute it instead.\n" >&2
+    error_guard "This script is being sourced. Please execute it instead."
     return 1
 fi
+
+# Ensure the script is run with root privileges
+if [[ $EUID -ne 0 ]]; then
+    error_guard "This script requires root privileges. Please run it with: sudo ${BASH_SOURCE[0]}"
+    exit 1
+fi
+
+
+# ─────────────────────────────────────────
+#           Setup & Configuration                                                             
+# ─────────────────────────────────────────
 
 set -euo pipefail
 
@@ -60,18 +79,11 @@ spinner() {
 }
 
 
-# ─────────────────────────────────────
-#              MAIN SCRIPT                  
-# ─────────────────────────────────────
+# ────────────────────────────────
+#           Installation                                        
+# ────────────────────────────────
 
-
-# Several guard clause checks before proceeding
-if [[ $EUID -ne 0 ]]; then
-    error_no_log "This script requires root privileges. Please run it with: sudo ${BASH_SOURCE[0]}"
-fi
-
-
-# Install apt packages
+## ─── Install apt packages ──────────────────────────────
 if ! command -v apt &>/dev/null; then
     error_no_log "This script requires apt package manager (Debian/Ubuntu)"
 fi
@@ -81,7 +93,7 @@ pid=$!
 spinner "installing apt packages" "$pid"
 
 
-# Install Homebrew packages
+## ─── Install Homebrew packages ──────────────────────────────
 if command -v brew &>/dev/null; then
     done_ "brew is already installed at $(command -v brew)"
 else
