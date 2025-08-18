@@ -31,22 +31,24 @@ set -euo pipefail
 RED='\033[31m'
 GREEN='\033[32m'
 YELLOW='\033[33m'
+GRAY='\033[38;5;239m'
 NC='\033[0m'
 
 LOG_FILE="/tmp/dotfiles-install-$(date +%Y%m%d-%H%M%S).log"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 done_() {
-    local message="${GREEN}[Done]${NC} $1\n"
-    printf "$message"
-    printf "$message" >> "$LOG_FILE"
+    printf "${GREEN}[Done]${NC} $1\n"
+    printf "[Done] $1\n" >> "$LOG_FILE"
 }
 
 error() {
     printf "${RED}[Error]${NC} %s\n" "$1" >&2
     if [[ -f "$LOG_FILE" ]]; then
         printf "${RED}Last 10 lines from log:${NC}\n" >&2
+        printf "${RED}==============================${GRAY}\n"
         tail -10 "$LOG_FILE" >&2
+        printf "${RED}==============================${NC}\n"
     fi
     exit 1
 }
