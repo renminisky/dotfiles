@@ -36,6 +36,7 @@ NC='\033[0m'
 
 LOG_FILE="/tmp/dotfiles-install-$(date +%Y%m%d-%H%M%S).log"
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ZSHENV_FILE="/etc/zsh/zshenv"
 
 done_() {
     printf "${GREEN}[Done]${NC} $1\n"
@@ -128,3 +129,26 @@ fi
 brew bundle --file "$DIR/Brewfile" &>> "$LOG_FILE" &
 pid=$!
 spinner "Installing Homebrew packages" "$pid"
+
+
+## ─── Set zsh directory  ──────────────────────────────
+
+
+# Check if the file exists
+if [[ ! -f "$ZSHENV_FILE" ]]; then
+    error_no_log "$ZSHENV_FILE does not exist. Cannot set ZDOTDIR."
+fi
+
+# Append ZDOTDIR only if not already set
+if ! grep -Eq '^[[:space:]]*export[[:space:]]+ZDOTDIR=' "$ZSHENV_FILE" 2>/dev/null; then
+    if [[ -z "$(tail -n 1 "$ZSHENV_FILE" | tr -d '[:space:]')" ]]; then
+        # Last line is empty → just append without adding another newline
+        printf 'export ZDOTDIR="%s"\n' "$DIR" | sudo tee -a "$ZSHENV_FILE" >/dev/null
+    else
+        # Last line is not empty → insert a newline before appending
+        printf '\nexport ZDOTDIR="%s"\n' "$DIR" | sudo tee -a "$ZSHENV_FILE" >/dev/null
+    fi
+    done_ "added ZDOTDIR to $ZSHENV_FILE"
+else
+    done_ "ZDOTDIR already set in $ZSHENV_FILE"
+fi
