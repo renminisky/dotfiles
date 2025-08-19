@@ -5,7 +5,7 @@
 # ────────────────────────────────────
 
 error_guard() {
-    printf "\033[31m[Error]\033[0m} %s\n" "$1" >&2
+    printf "\033[31m[Error]\033[0m %s\n" "$1" >&2
 }
 
 # Prevent the script from being sourced
@@ -14,9 +14,9 @@ if [[ "${BASH_SOURCE[0]}" != "$0" ]]; then
     return 1
 fi
 
-# Ensure the script is run with root privileges
-if [[ $EUID -ne 0 ]]; then
-    error_guard "This script requires root privileges. Please run it with: sudo ${BASH_SOURCE[0]}"
+# Prevent running as root
+if [[ $EUID -eq 0 ]]; then
+    error_guard "Don't run this script as root"
     exit 1
 fi
 
@@ -85,25 +85,46 @@ spinner() {
 #           Installation                                        
 # ────────────────────────────────
 
+
+## ─── Keep sudo alive ──────────────────────────────
+
+
+sudo -v  # prompt password once
+(
+    while true; do
+        sudo -n true
+        sleep 60
+    done
+) &
+sudo_keeper_pid=$!
+trap 'kill $sudo_keeper_pid 2>/dev/null' EXIT
+
+
 ## ─── Install apt packages ──────────────────────────────
+
+
 if ! command -v apt &>/dev/null; then
     error_no_log "This script requires apt package manager (Debian/Ubuntu)"
 fi
 
-(sudo bash -c 'apt update && apt install -y build-essential procps curl file git wget zsh' &>> "$LOG_FILE") &
+sudo bash -c 'apt update && apt install -y build-essential procps curl file git wget zsh' &>> "$LOG_FILE" &
 pid=$!
-spinner "installing apt packages" "$pid"
+spinner "Installing apt packages" "$pid"
 
 
 ## ─── Install Homebrew packages ──────────────────────────────
+
+
+# Install Homebrew
 if command -v brew &>/dev/null; then
-    done_ "brew is already installed at $(command -v brew)"
+    done_ "Homebrew is already installed at $(command -v brew)"
 else
-    (bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>> "$LOG_FILE") &
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>> "$LOG_FILE" &
     pid=$!
-    spinner "installing brew" "$pid"
+    spinner "Installing Homebrew" "$pid"
 fi
 
-(brew bundle --file "$DIR/Brewfile" &>> "$LOG_FILE") &
+# Install Homebrew packages
+brew bundle --file "$DIR/Brewfile" &>> "$LOG_FILE" &
 pid=$!
-spinner "installing brew packages" "$pid"
+spinner "Installing Homebrew packages" "$pid"
