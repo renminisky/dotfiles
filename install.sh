@@ -97,6 +97,7 @@ sudo -v  # prompt password once
         sleep 60
     done
 ) &
+
 sudo_keeper_pid=$!
 trap 'kill $sudo_keeper_pid 2>/dev/null' EXIT
 
@@ -111,24 +112,6 @@ fi
 sudo bash -c 'apt update && apt install -y build-essential procps curl file git wget zsh' &>> "$LOG_FILE" &
 pid=$!
 spinner "Installing apt packages" "$pid"
-
-
-## ─── Install Homebrew packages ──────────────────────────────
-
-
-# Install Homebrew
-if command -v brew &>/dev/null; then
-    done_ "Homebrew is already installed at $(command -v brew)"
-else
-    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>> "$LOG_FILE" &
-    pid=$!
-    spinner "Installing Homebrew" "$pid"
-fi
-
-# Install Homebrew packages
-brew bundle --file "$DIR/Brewfile" &>> "$LOG_FILE" &
-pid=$!
-spinner "Installing Homebrew packages" "$pid"
 
 
 ## ─── Set zsh directory  ──────────────────────────────
@@ -152,3 +135,28 @@ if ! grep -Eq '^[[:space:]]*export[[:space:]]+ZDOTDIR=' "$ZSHENV_FILE" 2>/dev/nu
 else
     done_ "ZDOTDIR already set in $ZSHENV_FILE"
 fi
+
+
+## ─── Install Homebrew packages ──────────────────────────────
+
+
+# We do this last because it breaks sudo alive loop
+
+# Install Homebrew
+if command -v brew &>/dev/null; then
+    done_ "Homebrew is already installed at $(command -v brew)"
+else
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" &>> "$LOG_FILE" &
+    pid=$!
+    spinner "Installing Homebrew" "$pid"
+fi
+
+# Set up Homebrew environment
+eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+
+# Install Homebrew packages
+brew bundle --file "$DIR/Brewfile" &>> "$LOG_FILE" &
+pid=$!
+spinner "Installing Homebrew packages" "$pid"
+
+
