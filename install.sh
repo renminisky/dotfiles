@@ -34,8 +34,14 @@ YELLOW='\033[33m'
 GRAY='\033[38;5;239m'
 NC='\033[0m'
 
-LOG_FILE="/tmp/dotfiles-install-$(date +%Y%m%d-%H%M%S).log"
+XDG_CONFIG_HOME="$HOME/.config"
+
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CONFIG_DIR="$DIR/config"
+PRIVATE_DIR="$DIR/private_config"
+TEMPLATE_DIR="$DIR/private_config/templates"
+
+LOG_FILE="/tmp/dotfiles-install-$(date +%Y%m%d-%H%M%S).log"
 ZSHENV_FILE="/etc/zsh/zshenv"
 
 done_() {
@@ -114,7 +120,7 @@ pid=$!
 spinner "Installing apt packages" "$pid"
 
 
-## ─── Set zsh directory  ──────────────────────────────
+## ─── Set zsh directory ──────────────────────────────
 
 
 # Check if the file exists
@@ -135,6 +141,14 @@ if ! grep -Eq '^[[:space:]]*export[[:space:]]+ZDOTDIR=' "$ZSHENV_FILE" 2>/dev/nu
 else
     done_ "ZDOTDIR already set in $ZSHENV_FILE"
 fi
+
+
+## ─── Create private config files ──────────────────────────────
+
+
+# git
+[ ! -f "$PRIVATE_DIR/gitconfig.private" ] && cp "$TEMPLATE_DIR/gitconfig.private.template" "$PRIVATE_DIR/gitconfig.private"
+ln -s "$PRIVATE_DIR/gitconfig.private" "$XDG_CONFIG_HOME/git/config.private"
 
 
 ## ─── Install Homebrew packages ──────────────────────────────
