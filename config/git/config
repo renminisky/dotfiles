@@ -1,0 +1,6 @@
+[include]
+	path = config.private
+
+[init]
+  defaultBranch = main
+  
