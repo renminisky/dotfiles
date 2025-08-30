@@ -143,12 +143,23 @@ else
 fi
 
 
+## ─── Stow configs ──────────────────────────────
+
+
+[ ! -d "$XDG_CONFIG_HOME" ] && mkdir -p "$XDG_CONFIG_HOME"
+stow --dir="$CONFIG_DIR" --target="$XDG_CONFIG_HOME" . --no-folding
+
+done_ "Stowed config files"
+
+
 ## ─── Create private config files ──────────────────────────────
 
 
 # git
 [ ! -f "$PRIVATE_DIR/gitconfig.private" ] && cp "$TEMPLATE_DIR/gitconfig.private.template" "$PRIVATE_DIR/gitconfig.private"
 ln -s "$PRIVATE_DIR/gitconfig.private" "$XDG_CONFIG_HOME/git/config.private"
+
+done_ "Created private config"
 
 
 ## ─── Install Homebrew packages ──────────────────────────────
