@@ -52,7 +52,7 @@ done_() {
 error() {
     printf "${RED}[Error]${NC} %s\n" "$1" >&2
     if [[ -f "$LOG_FILE" ]]; then
-        printf "${RED}Last 10 lines from log:${NC}\n" >&2
+        printf "${RED}Last 10 lines from log (${LOG_FILE}):${NC}\n" >&2
         printf "${RED}==============================${GRAY}\n"
         tail -10 "$LOG_FILE" >&2
         printf "${RED}==============================${NC}\n"
