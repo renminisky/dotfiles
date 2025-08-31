@@ -149,7 +149,7 @@ fi
 ## ─── Install Homebrew packages ──────────────────────────────
 
 
-# This should be the last sudo command in script because it breaks sudo alive loop
+# This should be after the last sudo command in script because it breaks sudo alive loop
 
 # Install Homebrew
 if command -v brew &>/dev/null; then
