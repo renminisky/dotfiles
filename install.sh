@@ -37,12 +37,13 @@ NC='\033[0m'
 XDG_CONFIG_HOME="$HOME/.config"
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ZDOTDIR="$DIR/zsh"
 CONFIG_DIR="$DIR/config"
 PRIVATE_DIR="$DIR/private_config"
 TEMPLATE_DIR="$DIR/private_config/templates"
 
 LOG_FILE="/tmp/dotfiles-install-$(date +%Y%m%d-%H%M%S).log"
-ZSHENV_FILE="/etc/zsh/zshenv"
+SYSTEM_ZSHENV_FILE="/etc/zsh/zshenv"
 
 done_() {
     printf "${GREEN}[Done]${NC} $1\n"
@@ -142,22 +143,22 @@ fi
 
 
 # Check if the file exists
-if [[ ! -f "$ZSHENV_FILE" ]]; then
-    error_no_log "$ZSHENV_FILE does not exist. Cannot set ZDOTDIR."
+if [[ ! -f "$SYSTEM_ZSHENV_FILE" ]]; then
+    error_no_log "$SYSTEM_ZSHENV_FILE does not exist. Cannot set ZDOTDIR."
 fi
 
 # Append ZDOTDIR only if not already set
-if ! grep -Eq '^[[:space:]]*export[[:space:]]+ZDOTDIR=' "$ZSHENV_FILE" 2>/dev/null; then
-    if [[ -z "$(tail -n 1 "$ZSHENV_FILE" | tr -d '[:space:]')" ]]; then
+if ! grep -Eq '^[[:space:]]*export[[:space:]]+ZDOTDIR=' "$SYSTEM_ZSHENV_FILE" 2>/dev/null; then
+    if [[ -z "$(tail -n 1 "$SYSTEM_ZSHENV_FILE" | tr -d '[:space:]')" ]]; then
         # Last line is empty → just append without adding another newline
-        printf 'export ZDOTDIR="%s"\n' "$DIR" | sudo tee -a "$ZSHENV_FILE" >/dev/null
+        printf 'export ZDOTDIR="%s"\n' "$ZDOTDIR" | sudo tee -a "$SYSTEM_ZSHENV_FILE" >/dev/null
     else
         # Last line is not empty → insert a newline before appending
-        printf '\nexport ZDOTDIR="%s"\n' "$DIR" | sudo tee -a "$ZSHENV_FILE" >/dev/null
+        printf '\nexport ZDOTDIR="%s"\n' "$ZDOTDIR" | sudo tee -a "$SYSTEM_ZSHENV_FILE" >/dev/null
     fi
-    done_ "added ZDOTDIR to $ZSHENV_FILE"
+    done_ "added ZDOTDIR to $SYSTEM_ZSHENV_FILE"
 else
-    done_ "ZDOTDIR already set in $ZSHENV_FILE"
+    done_ "ZDOTDIR already set in $SYSTEM_ZSHENV_FILE"
 fi
 
 
