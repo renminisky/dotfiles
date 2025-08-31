@@ -201,3 +201,10 @@ done_ "Stowed config files"
 ln -sf "$PRIVATE_DIR/gitconfig.private" "$XDG_CONFIG_HOME/git/config.private"
 
 done_ "Created private config"
+
+
+## ─── Final message ──────────────────────────────
+
+
+printf "${GREEN}Installation completed successfully!${NC}\n"
+printf "Restart your shell with 'exec zsh' to apply changes.\n"
