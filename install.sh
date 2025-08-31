@@ -123,6 +123,21 @@ pid=$!
 spinner "Installing apt packages" "$pid"
 
 
+## ─── Change default shell to zsh ──────────────────────────────
+
+
+if [[ "$SHELL" != *"zsh" ]]; then
+    if command -v zsh &>/dev/null; then
+        sudo chsh -s "$(command -v zsh)" 2>&1 | tee -a "$LOG_FILE"
+        done_ "Changing default shell to zsh"
+    else
+        error "zsh is not installed"
+    fi
+else
+    done_ "Default shell is already zsh"
+fi
+
+
 ## ─── Set zsh directory ──────────────────────────────
 
 
