@@ -93,6 +93,9 @@ spinner() {
 # ────────────────────────────────
 
 
+printf "This installation log is output into ${LOG_FILE}\n"
+
+
 ## ─── Keep sudo alive ──────────────────────────────
 
 
@@ -169,8 +172,8 @@ spinner "Installing Homebrew packages" "$pid"
 ## ─── Stow configs ──────────────────────────────
 
 
-[ ! -d "$XDG_CONFIG_HOME" ] && mkdir -p "$XDG_CONFIG_HOME"
-stow --dir="$CONFIG_DIR" --target="$XDG_CONFIG_HOME" . --no-folding
+[ ! -d "$XDG_CONFIG_HOME" ] && mkdir -p "$XDG_CONFIG_HOME" 2>&1 | tee -a "$LOG_FILE"
+stow --dir="$CONFIG_DIR" --target="$XDG_CONFIG_HOME" . --no-folding 2>&1 | tee -a "$LOG_FILE"
 
 done_ "Stowed config files"
 
