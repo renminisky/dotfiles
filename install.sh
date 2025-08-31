@@ -180,6 +180,6 @@ done_ "Stowed config files"
 
 # git
 [ ! -f "$PRIVATE_DIR/gitconfig.private" ] && cp "$TEMPLATE_DIR/gitconfig.private.template" "$PRIVATE_DIR/gitconfig.private"
-ln -s "$PRIVATE_DIR/gitconfig.private" "$XDG_CONFIG_HOME/git/config.private"
+ln -sf "$PRIVATE_DIR/gitconfig.private" "$XDG_CONFIG_HOME/git/config.private"
 
 done_ "Created private config"
