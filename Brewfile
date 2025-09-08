@@ -1,2 +1,5 @@
 brew "stow"
 brew "powerlevel10k"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+brew "zsh-autocomplete"
