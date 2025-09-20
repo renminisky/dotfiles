@@ -8,11 +8,13 @@ HISTFILE="$XDG_STATE_HOME/zsh/history"
 HISTSIZE=1000000
 SAVEHIST=1000000
 
-# Append to history file, don't overwrite it
-setopt INC_APPEND_HISTORY
-# Before each command, update local shell history with history file
-autoload -Uz add-zsh-hook
-add-zsh-hook precmd() { fc -RI }
+# SHARE_HISTORY:
+# - Append to history file instead of overwriting
+# - Append after command finish execution, not before (to store timestamp and duration)
+# - Always update/sync local shell session history cache with history file after each command (to get commands from other sessions) 
+setopt SHARE_HISTORY
+# Remove beginning spaces before recording command in history file
+setopt HIST_REDUCE_BLANKS
 # Remove older duplicate from history file when adding same new command
 setopt HIST_IGNORE_ALL_DUPS
 # Don't show duplicates in history search
