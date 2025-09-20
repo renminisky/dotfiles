@@ -34,6 +34,7 @@ source $HOMEBREW_PREFIX/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zs
 source $HOMEBREW_PREFIX/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # zsh-autocomplete
+ZSH_COMPDUMP="${XDG_CACHE_HOME}/zsh/zcompdump"
 source $HOMEBREW_PREFIX/share/zsh-autocomplete/zsh-autocomplete.plugin.zsh
 
 bindkey              '^I'         menu-complete
