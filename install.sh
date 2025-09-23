@@ -135,7 +135,7 @@ if [[ "$SHELL" != *"zsh" ]]; then
         error "zsh is not installed"
     fi
 else
-    done_ "Default shell is already zsh"
+    done_ "Zsh is already the default shell"
 fi
 
 
